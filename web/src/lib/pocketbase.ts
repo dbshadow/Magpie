@@ -1,3 +1,7 @@
 import PocketBase from 'pocketbase';
 
-export const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090');
+// API URL from environment variable
+// If not set, usually defaults to '/' (same origin) or handle logic as needed
+const apiUrl = import.meta.env.VITE_API_URL || '/';
+
+export const pb = new PocketBase(apiUrl);
