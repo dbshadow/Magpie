@@ -6,6 +6,8 @@ Magpie 是一個企業內部的 Prompt (AI 指令) 分享與管理平台。它�
 
 ![Magpie Logo](./web/public/logo.png)
 
+![Magpie UI](./web/public/screenshot.png)
+
 ## ✨ 功能特色
 
 *   **Prompt 探索**：瀑布流式 (Masonry) 的卡片瀏覽體驗，支援標題與作者搜尋。

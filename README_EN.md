@@ -6,6 +6,8 @@ Magpie is an internal Prompt Database and sharing platform for organizations. It
 
 ![Magpie Logo](./web/public/logo.png)
 
+![Magpie UI](./web/public/screenshot.png)
+
 ## ✨ Features
 
 *   **Prompt Discovery**: Explore prompts with a Pinterest-style masonry layout, supporting title and author search.
