@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { pb } from '../lib/pocketbase'
 import { useI18n } from 'vue-i18n'
 import Header from '../components/Header.vue'
@@ -11,7 +11,7 @@ import { useTagStore } from '../stores/tagStore'
 const { t } = useI18n()
 const tagStore = useTagStore()
 const prompts = ref<any[]>([])
-const loading = ref(true)
+const loading = ref(false) // Start false, loadPrompts will set true
 const selectedPrompt = ref<any>(null)
 const isModalOpen = ref(false)
 const isCreateModalOpen = ref(false)
@@ -19,42 +19,65 @@ const isEditMode = ref(false)
 const remixData = ref<any>(null)
 const selectedTagId = ref<string | null>(null)
 const searchQuery = ref('')
+const page = ref(1)
+const hasMore = ref(true)
+let searchTimeout: ReturnType<typeof setTimeout>
 
-const filteredPrompts = computed(() => {
-  let result = prompts.value
-
-  // Tag Filter
-  if (selectedTagId.value) {
-    result = result.filter(p => Array.isArray(p.tags) && p.tags.includes(selectedTagId.value))
+// Backend Filtering Logic
+const loadPrompts = async (reset = false) => {
+  if (reset) {
+    page.value = 1
+    prompts.value = []
+    hasMore.value = true
   }
 
-  // Search Filter
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(p => {
-      const titleMatch = p.title?.toLowerCase().includes(query)
-      const user = p.expand?.user
-      const authorMatch = (user?.name || user?.username || user?.email || '').toLowerCase().includes(query)
-      return titleMatch || authorMatch
-    })
-  }
+  if (!hasMore.value && !reset) return
+  if (loading.value) return
 
-  return result
-})
-
-const fetchPrompts = async () => {
   loading.value = true
   try {
-    const result = await pb.collection('prompts').getList(1, 50, {
+    const filters = []
+    if (selectedTagId.value) {
+      filters.push(`tags ~ '${selectedTagId.value}'`)
+    }
+    if (searchQuery.value.trim()) {
+      const query = searchQuery.value.trim()
+      filters.push(`(title ~ "${query}" || user.name ~ "${query}" || user.username ~ "${query}" || user.email ~ "${query}")`)
+    }
+
+    const result = await pb.collection('prompts').getList(page.value, 50, {
       sort: '-created',
-      expand: 'user,tags,parent_id.user'
+      expand: 'user,tags,parent_id.user',
+      filter: filters.join(' && ')
     })
-    prompts.value = result.items
+
+    if (reset) {
+      prompts.value = result.items
+    } else {
+      prompts.value = [...prompts.value, ...result.items]
+    }
+    
+    page.value++
+    hasMore.value = result.page < result.totalPages
   } catch (e) {
     console.error(e)
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
+
+// Watchers for filters
+
+watch(selectedTagId, () => {
+  loadPrompts(true)
+})
+
+watch(searchQuery, () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    loadPrompts(true)
+  }, 300)
+})
 
 const openPrompt = (prompt: any) => {
   selectedPrompt.value = prompt
@@ -83,7 +106,7 @@ const handleEdit = (prompt: any) => {
 
 const handleDeleted = () => {
   isModalOpen.value = false
-  fetchPrompts()
+  loadPrompts(true)
 }
 
 const handleOpenParent = async (parentId: string) => {
@@ -103,9 +126,25 @@ const handleOpenParent = async (parentId: string) => {
   }
 }
 
+const sentinel = ref<HTMLElement | null>(null)
+
 onMounted(() => {
   tagStore.fetchTags()
-  fetchPrompts()
+  loadPrompts()
+  
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0]?.isIntersecting && !loading.value && hasMore.value) {
+      loadPrompts()
+    }
+  }, { rootMargin: '200px' })
+  
+  // Use a timeout to ensure DOM is ready or watch sentinel
+  // But onMounted is usually enough. However, if prompts are empty, sentinel might be visible immediately.
+  // which is fine, it will trigger load.
+  if (sentinel.value) observer.observe(sentinel.value)
+  
+  // Make sure to clean up if we were unmounting, but this is a top level view.
+  // Ideally use onUnmounted to disconnect.
 })
 </script>
 
@@ -195,11 +234,16 @@ onMounted(() => {
       <!-- Grid -->
       <div v-else class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <PromptCard 
-          v-for="prompt in filteredPrompts" 
+          v-for="prompt in prompts" 
           :key="prompt.id" 
           :prompt="prompt"
           @click="openPrompt"
         />
+      </div>
+      
+      <!-- Sentinel for Infinite Scroll -->
+      <div ref="sentinel" class="h-10 w-full flex justify-center items-center mt-4">
+          <div v-if="loading && prompts.length > 0" class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-primary"></div>
       </div>
     </main>
 
@@ -219,8 +263,8 @@ onMounted(() => {
       :initial-data="remixData"
       :edit-mode="isEditMode"
       @close="isCreateModalOpen = false"
-      @created="fetchPrompts"
-      @updated="fetchPrompts"
+      @created="loadPrompts(true)"
+      @updated="loadPrompts(true)"
     />
   </div>
 </template>
