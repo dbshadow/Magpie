@@ -19,7 +19,7 @@ const isEditMode = ref(false)
 const remixData = ref<any>(null)
 const selectedTagId = ref<string | null>(null)
 const searchQuery = ref('')
-const sortBy = ref('-created')
+const sortBy = ref('-updated')
 const page = ref(1)
 const hasMore = ref(true)
 let searchTimeout: ReturnType<typeof setTimeout>
@@ -202,8 +202,8 @@ onMounted(() => {
               v-model="sortBy"
               class="rounded-xl border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all"
             >
-              <option value="-created">{{ t('sort.newest') }}</option>
-              <option value="created">{{ t('sort.oldest') }}</option>
+              <option value="-updated">{{ t('sort.newest') }}</option>
+              <option value="updated">{{ t('sort.oldest') }}</option>
               <option value="title">{{ t('sort.title') }}</option>
               <option value="user.name,user.username,user.email">{{ t('sort.author') }}</option>
               <option value="-likes_count">{{ t('sort.popular') }}</option>

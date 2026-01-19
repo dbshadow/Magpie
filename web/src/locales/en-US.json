@@ -26,8 +26,8 @@
   },
   "sort": {
     "label": "Sort By",
-    "newest": "Newest",
-    "oldest": "Oldest",
+    "newest": "Recently Updated",
+    "oldest": "Least Recently Updated",
     "title": "Title (A-Z)",
     "author": "Author (A-Z)",
     "popular": "Most Liked"

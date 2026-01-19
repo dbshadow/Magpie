@@ -26,8 +26,8 @@
   },
   "sort": {
     "label": "排序方式",
-    "newest": "最新上架",
-    "oldest": "最舊上架",
+    "newest": "最新更新",
+    "oldest": "最舊更新",
     "title": "標題 (A-Z)",
     "author": "作者 (A-Z)",
     "popular": "熱門程度"
