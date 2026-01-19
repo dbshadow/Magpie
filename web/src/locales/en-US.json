@@ -14,8 +14,9 @@
     "anonymous": "Anonymous"
   },
   "home": {
-    "title": "Collect the spark, build your nest.",
-    "subtitle": "Discover and capture high-quality AI instructions. Feel free to swoop in, remix the best prompts, and share the shine with your team.",
+    "title": "Spot the shine, house your creativity.",
+    "subtitle": "Discover and capture high-quality AI instructions.",
+    "subtitle2": "Like a magpie spotting shiny treasures, swoop in, remix the best prompts, and share the shine with your team.",
     "createPrompt": "Create Prompt",
     "noPrompts": "No prompts found",
     "beTheFirst": "Be the first to share a prompt with your team!",

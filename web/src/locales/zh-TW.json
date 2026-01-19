@@ -14,8 +14,9 @@
     "anonymous": "匿名"
   },
   "home": {
-    "title": "採集靈光，築夢成巢",
-    "subtitle": "在這裡探索並捕捉高品質的 AI 指令。隨心所欲地叼回、重組，並將這份光芒分享給整個團隊。",
+    "title": "尋覓光點，安放創意",
+    "subtitle": "在這裡探索並捕捉高品質的 AI 指令。",
+    "subtitle2": "像喜鵲收藏寶物般，隨心所欲地叼回、重組，並將這份光芒分享給整個團隊。",
     "createPrompt": "建立 Prompt",
     "noPrompts": "尚未有任何 Prompt",
     "beTheFirst": "成為第一個分享 Prompt 的人！",

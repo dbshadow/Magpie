@@ -161,9 +161,11 @@ onMounted(() => {
       <!-- Hero / Action Area -->
       <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 class="text-4xl font-black tracking-tight text-gray-900 sm:text-5xl">{{ t('home.title') }}</h1>
-          <p class="mt-3 text-lg text-gray-500 font-medium max-w-xl">
+          <h1 class="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">{{ t('home.title') }}</h1>
+          <p class="mt-2 text-base text-gray-500 font-medium max-w-xl">
             {{ t('home.subtitle') }}
+            <br>
+            {{ t('home.subtitle2') }}
           </p>
         </div>
         <button 
