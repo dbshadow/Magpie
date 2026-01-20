@@ -126,7 +126,7 @@ onMounted(() => {
             alt="Avatar"
           />
           
-          <span class="text-xs font-medium text-gray-500">{{ prompt.expand?.user?.name || prompt.expand?.user?.username || prompt.expand?.user?.email?.split('@')[0] || t('common.anonymous') }}</span>
+          <span class="text-xs font-medium text-gray-500">{{ prompt.expand?.user?.username || prompt.expand?.user?.email?.split('@')[0] || t('common.anonymous') }}</span>
         </div>
         
         <button 

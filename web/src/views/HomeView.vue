@@ -43,7 +43,7 @@ const loadPrompts = async (reset = false) => {
     }
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.trim()
-      filters.push(`(title ~ "${query}" || user.name ~ "${query}" || user.username ~ "${query}" || user.email ~ "${query}")`)
+      filters.push(`(title ~ "${query}" || user.username ~ "${query}" || user.email ~ "${query}")`)
     }
 
     const result = await pb.collection('prompts').getList(page.value, 50, {
@@ -205,7 +205,7 @@ onMounted(() => {
               <option value="-updated">{{ t('sort.newest') }}</option>
               <option value="updated">{{ t('sort.oldest') }}</option>
               <option value="title">{{ t('sort.title') }}</option>
-              <option value="user.name,user.username,user.email">{{ t('sort.author') }}</option>
+              <option value="user.username,user.email">{{ t('sort.author') }}</option>
               <option value="-likes_count">{{ t('sort.popular') }}</option>
             </select>
           </div>

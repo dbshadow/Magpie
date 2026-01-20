@@ -61,7 +61,7 @@ const toggleLanguage = () => {
                     />
                 </div>
                 <div class="hidden sm:block">
-                  <p class="text-sm font-bold text-gray-900 leading-none">{{ user.name || user.username || user.email }}</p>
+                  <p class="text-sm font-bold text-gray-900 leading-none">{{ user.username || user.email }}</p>
                 </div>
             </div>
 
