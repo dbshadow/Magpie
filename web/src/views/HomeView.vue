@@ -17,7 +17,7 @@ const isModalOpen = ref(false)
 const isCreateModalOpen = ref(false)
 const isEditMode = ref(false)
 const remixData = ref<any>(null)
-const selectedTagId = ref<string | null>(null)
+const selectedTags = ref<Set<string>>(new Set())
 const searchQuery = ref('')
 const sortBy = ref('-updated')
 const page = ref(1)
@@ -38,8 +38,9 @@ const loadPrompts = async (reset = false) => {
   loading.value = true
   try {
     const filters = []
-    if (selectedTagId.value) {
-      filters.push(`tags ~ '${selectedTagId.value}'`)
+    if (selectedTags.value.size > 0) {
+      const tagFilters = Array.from(selectedTags.value).map(id => `tags ~ '${id}'`)
+      filters.push(`(${tagFilters.join(' && ')})`)
     }
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.trim()
@@ -69,9 +70,9 @@ const loadPrompts = async (reset = false) => {
 
 // Watchers for filters
 
-watch(selectedTagId, () => {
+watch(selectedTags, () => {
   loadPrompts(true)
-})
+}, { deep: true })
 
 watch(sortBy, () => {
   loadPrompts(true)
@@ -214,10 +215,10 @@ onMounted(() => {
         <!-- Tag Filter -->
         <div class="flex flex-wrap gap-2">
           <button 
-            @click="selectedTagId = null"
+            @click="selectedTags.clear()"
             :class="[
               'rounded-xl px-4 py-2 text-sm font-bold transition-all border',
-              !selectedTagId 
+              selectedTags.size === 0 
                 ? 'bg-primary border-primary text-gray-900 shadow-lg shadow-primary/20' 
                 : 'bg-surface border-gray-200 dark:border-gray-800 text-muted hover:border-primary hover:text-primary'
             ]"
@@ -227,10 +228,10 @@ onMounted(() => {
           <button 
             v-for="tag in tagStore.tags" 
             :key="tag.id"
-            @click="selectedTagId = tag.id"
+            @click="selectedTags.has(tag.id) ? selectedTags.delete(tag.id) : selectedTags.add(tag.id)"
             :class="[
               'rounded-xl px-4 py-2 text-sm font-bold transition-all border',
-              selectedTagId === tag.id
+              selectedTags.has(tag.id)
                 ? 'bg-primary border-primary text-gray-900 shadow-lg shadow-primary/20' 
                 : 'bg-surface border-gray-200 dark:border-gray-800 text-muted hover:border-primary hover:text-primary'
             ]"
