@@ -1,20 +1,56 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Light Mode Palette */
+  --color-background: #F3F4F6;
+  --color-surface: #FFFFFF;
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+}
+
+.dark {
+  /* Dark Mode Palette */
+  --color-background: #111827;
+  --color-surface: #1F2937;
+  --color-text-main: #F9FAFB;
+  --color-text-muted: #9CA3AF;
+}
+
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
   --color-primary: #76E4D7;
   --color-primary-hover: #5DCFC3;
-  --color-background: #F3F4F6;
-  --color-surface: #FFFFFF;
+  
+  /* Semantic Colors */
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-text-main: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
 }
 
 :root {
   font-family: var(--font-sans);
   background-color: var(--color-background);
-  color: #111827;
+  color: var(--color-text-main);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure common elements use semantic colors */
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.text-main {
+  color: var(--color-text-main);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
 }

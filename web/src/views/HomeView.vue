@@ -161,8 +161,8 @@ onMounted(() => {
       <!-- Hero / Action Area -->
       <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 class="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">{{ t('home.title') }}</h1>
-          <p class="mt-2 text-base text-gray-500 font-medium max-w-xl">
+          <h1 class="text-3xl font-black tracking-tight text-main sm:text-4xl">{{ t('home.title') }}</h1>
+          <p class="mt-2 text-base text-muted font-medium max-w-xl">
             {{ t('home.subtitle') }}
             <br>
             {{ t('home.subtitle2') }}
@@ -190,17 +190,17 @@ onMounted(() => {
             <input 
               v-model="searchQuery"
               type="text" 
-              class="block w-full rounded-2xl border-0 bg-white py-3.5 pl-11 pr-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 transition-all" 
+              class="block w-full rounded-2xl border-0 bg-surface py-3.5 pl-11 pr-4 text-main shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 transition-all" 
               :placeholder="t('home.searchPlaceholder')" 
             />
           </div>
 
           <!-- Sort Select -->
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-400 whitespace-nowrap">{{ t('sort.label') }}:</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-muted whitespace-nowrap">{{ t('sort.label') }}:</span>
             <select 
               v-model="sortBy"
-              class="rounded-xl border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+              class="rounded-xl border border-gray-200 dark:border-gray-800 bg-surface px-4 py-2 text-sm font-bold text-main shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-all"
             >
               <option value="-updated">{{ t('sort.newest') }}</option>
               <option value="updated">{{ t('sort.oldest') }}</option>
@@ -219,7 +219,7 @@ onMounted(() => {
               'rounded-xl px-4 py-2 text-sm font-bold transition-all border',
               !selectedTagId 
                 ? 'bg-primary border-primary text-gray-900 shadow-lg shadow-primary/20' 
-                : 'bg-white border-gray-200 text-gray-500 hover:border-primary hover:text-primary'
+                : 'bg-surface border-gray-200 dark:border-gray-800 text-muted hover:border-primary hover:text-primary'
             ]"
           >
             {{ t('home.allTags') }}
@@ -232,7 +232,7 @@ onMounted(() => {
               'rounded-xl px-4 py-2 text-sm font-bold transition-all border',
               selectedTagId === tag.id
                 ? 'bg-primary border-primary text-gray-900 shadow-lg shadow-primary/20' 
-                : 'bg-white border-gray-200 text-gray-500 hover:border-primary hover:text-primary'
+                : 'bg-surface border-gray-200 dark:border-gray-800 text-muted hover:border-primary hover:text-primary'
             ]"
           >
             #{{ tag.name }}
@@ -242,14 +242,14 @@ onMounted(() => {
 
       <!-- Loading State -->
       <div v-if="loading" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        <div v-for="i in 8" :key="i" class="h-80 animate-pulse rounded-3xl bg-gray-200"></div>
+        <div v-for="i in 8" :key="i" class="h-80 animate-pulse rounded-3xl bg-gray-200 dark:bg-gray-800"></div>
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="prompts.length === 0" class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 bg-white py-32 text-center">
-        <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50 text-4xl">🕊️</div>
-        <h3 class="text-xl font-bold text-gray-900">{{ t('home.noPrompts') }}</h3>
-        <p class="mt-2 text-gray-500">{{ t('home.beTheFirst') }}</p>
+      <div v-else-if="prompts.length === 0" class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-surface py-32 text-center">
+        <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-900/50 text-4xl">🕊️</div>
+        <h3 class="text-xl font-bold text-main">{{ t('home.noPrompts') }}</h3>
+        <p class="mt-2 text-muted">{{ t('home.beTheFirst') }}</p>
         <button @click="openCreateModal" class="mt-6 font-bold text-primary hover:text-primary-hover hover:underline">
           {{ t('home.createOne') }} &rarr;
         </button>

@@ -71,22 +71,22 @@ const handleDelete = async () => {
   <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
     <div @click="emit('close')" class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity"></div>
     
-    <div class="relative w-full max-w-6xl rounded-[2rem] bg-white shadow-2xl flex flex-col md:flex-row md:max-h-[90vh] md:overflow-hidden overflow-y-auto max-h-[90vh]">
+    <div class="relative w-full max-w-6xl rounded-[2rem] bg-surface shadow-2xl flex flex-col md:flex-row md:max-h-[90vh] md:overflow-hidden overflow-y-auto max-h-[90vh]">
       
       <!-- Left Column: Input & Configuration -->
-      <div class="flex w-full md:w-1/2 flex-col border-r border-gray-100 bg-white shrink-0">
+      <div class="flex w-full md:w-1/2 flex-col border-r border-gray-100 dark:border-gray-800 bg-surface shrink-0">
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-gray-100 p-6">
+        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 p-6">
           <div class="flex items-center gap-3">
-             <button @click="emit('close')" class="group rounded-full p-2 hover:bg-gray-100 transition-colors">
-              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-gray-400 group-hover:text-gray-900"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+             <button @click="emit('close')" class="group rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-gray-400 group-hover:text-main"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h2 class="text-xl font-bold text-gray-900 line-clamp-1">{{ prompt.title }}</h2>
+            <h2 class="text-xl font-bold text-main line-clamp-1">{{ prompt.title }}</h2>
           </div>
           <div class="flex gap-2">
             <template v-if="isAuthor">
-              <button @click="emit('edit', prompt)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">{{ t('common.edit') }}</button>
-              <button @click="handleDelete" class="rounded-lg px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors">{{ t('common.delete') }}</button>
+              <button @click="emit('edit', prompt)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-muted hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">{{ t('common.edit') }}</button>
+              <button @click="handleDelete" class="rounded-lg px-3 py-1.5 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">{{ t('common.delete') }}</button>
             </template>
           </div>
         </div>
@@ -94,7 +94,7 @@ const handleDelete = async () => {
         <!-- Scrollable Content -->
         <div class="flex-1 p-8 md:overflow-y-auto">
            <!-- Remix Source Indicator -->
-           <div v-if="prompt.expand?.parent_id" class="mb-6 flex items-center gap-2 rounded-xl bg-purple-50 p-3 text-xs text-purple-700 border border-purple-100">
+           <div v-if="prompt.expand?.parent_id" class="mb-6 flex items-center gap-2 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 text-xs text-purple-700 dark:text-purple-300 border border-purple-100 dark:border-purple-800">
               <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
               <span>
                 Remixed from 
@@ -106,8 +106,8 @@ const handleDelete = async () => {
            </div>
 
            <div class="mb-8">
-            <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">{{ t('prompt.description') }}</h4>
-            <p class="text-sm leading-relaxed text-gray-600">{{ prompt.description || 'No description provided.' }}</p>
+            <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">{{ t('prompt.description') }}</h4>
+            <p class="text-sm leading-relaxed text-muted">{{ prompt.description || 'No description provided.' }}</p>
           </div>
 
           <!-- Variable Filler -->
@@ -118,11 +118,11 @@ const handleDelete = async () => {
             </h4>
             <div class="space-y-4">
               <div v-for="variable in parsedVariables" :key="variable">
-                <label class="mb-1.5 block text-xs font-bold text-gray-500">{{ variable }}</label>
+                <label class="mb-1.5 block text-xs font-bold text-muted">{{ variable }}</label>
                 <input 
                   v-model="variables[variable]"
                   type="text" 
-                  class="block w-full rounded-xl border-0 bg-white px-4 py-3 text-sm shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-primary transition-all"
+                  class="block w-full rounded-xl border-0 bg-surface px-4 py-3 text-sm text-main shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-primary transition-all"
                   :placeholder="`Enter value for ${variable}`"
                 />
               </div>
@@ -131,22 +131,22 @@ const handleDelete = async () => {
 
            <!-- Raw Prompt View -->
            <div>
-            <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">{{ t('prompt.rawPrompt') }}</h4>
-            <div class="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-4 font-mono text-xs text-gray-500 whitespace-pre-wrap">
+            <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-muted">{{ t('prompt.rawPrompt') }}</h4>
+            <div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 p-4 font-mono text-xs text-muted whitespace-pre-wrap">
               {{ prompt.content }}
             </div>
            </div>
            
            <div class="mt-6 flex flex-wrap gap-2">
-            <span v-for="tag in prompt.expand?.tags" :key="tag.id" class="rounded-md bg-gray-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-500">
+            <span v-for="tag in prompt.expand?.tags" :key="tag.id" class="rounded-md bg-gray-100 dark:bg-gray-800 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-muted">
               #{{ tag.name }}
             </span>
           </div>
         </div>
 
         <!-- Footer Actions -->
-        <div class="border-t border-gray-100 p-6 bg-gray-50/50">
-           <button @click="emit('remix', prompt)" class="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-4 font-bold text-gray-700 hover:border-gray-300 hover:bg-gray-50 shadow-sm transition-all">
+        <div class="border-t border-gray-100 dark:border-gray-800 p-6 bg-gray-50/50 dark:bg-gray-800/20">
+           <button @click="emit('remix', prompt)" class="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-surface py-4 font-bold text-main hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 shadow-sm transition-all">
               <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
               {{ t('prompt.remix') }}
             </button>
