@@ -10,7 +10,8 @@ Magpie is an internal Prompt Database and sharing platform for organizations. It
 
 ## ✨ Features
 
-*   **Prompt Discovery**: Explore prompts with a Pinterest-style masonry layout, supporting title and author search.
+*   **Prompt Discovery**: Explore prompts with an Infinite Scroll masonry layout, supporting title and author search.
+*   **Favorites**: Like prompts to save them for quick access in your profile.
 *   **Tag Filtering**: Quickly filter specific types of prompts via backend-managed tags.
 *   **Smart Filler**: Automatically detects `[variable]` syntax in prompts and generates a fillable form with real-time preview.
 *   **Showcase Results**: Support for uploading images or text as example results of the prompt.
@@ -22,7 +23,8 @@ Magpie is an internal Prompt Database and sharing platform for organizations. It
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: [Vue 3](https://vuejs.org/) (Composition API, Script Setup) + [TypeScript](https://www.typescriptlang.org/)
+*   **Frontend**: [Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/)
+*   **Utility**: [VueUse](https://vueuse.org/) (Infinite Scroll)
 *   **Build Tool**: [Vite](https://vitejs.dev/)
 *   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 *   **State Management**: [Pinia](https://pinia.vuejs.org/)
@@ -70,6 +72,13 @@ Go to [http://localhost:8090/_/](http://localhost:8090/_/), create an admin acco
 | **users** | Auth | `status` (Select: pending, active), `role` (Select: user, admin), `avatar` (File) | Update: Owner or Admin |
 | **prompts** | Base | `title`, `content` (Text), `tags` (JSON), `user` (Rel: users), `parent_id` (Rel: prompts) | Create/View: Active User, Update/Delete: Owner |
 | **likes** | Base | `user` (Rel: users), `prompt` (Rel: prompts) | Create/Delete: Owner |
+
+> 💡 **Performance Tip**:
+> To ensure fast loading of the "Favorites" tab, make sure to create an index on the `user` field in the `likes` collection.
+> ```sql
+> CREATE INDEX idx_likes_user ON likes (user)
+> ```
+> When starting with Docker, the system automatically runs scripts in `pb_migrations` to create this index.
 
 ### 3. Start Frontend (Web)
 ```bash

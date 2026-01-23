@@ -10,7 +10,8 @@ Magpie 是一個企業內部的 Prompt (AI 指令) 分享與管理平台。它�
 
 ## ✨ 功能特色
 
-*   **Prompt 探索**：瀑布流式 (Masonry) 的卡片瀏覽體驗，支援標題與作者搜尋。
+*   **Prompt 探索**：無限捲動 (Infinite Scroll) 的瀑布流瀏覽體驗，支援標題與作者搜尋。
+*   **收藏與管理**：使用者可以收藏 (Like) 喜歡的 Prompt，並在個人檔案頁面快速查看。
 *   **分類過濾**：透過後端管理的標籤 (Tags) 快速篩選特定類型的指令。
 *   **智慧填空 (Smart Filler)**：自動偵測 Prompt 中的 `[variable]` 變數，並產生填空表單，即時預覽完整指令。
 *   **成果展示**：支援上傳圖片或文字作為 Prompt 的執行成果範例。
@@ -22,7 +23,8 @@ Magpie 是一個企業內部的 Prompt (AI 指令) 分享與管理平台。它�
 
 ## 🛠️ 技術架構
 
-*   **Frontend**: [Vue 3](https://vuejs.org/) (Composition API, Script Setup) + [TypeScript](https://www.typescriptlang.org/)
+*   **Frontend**: [Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/)
+*   **Utility**: [VueUse](https://vueuse.org/) (Infinite Scroll)
 *   **Build Tool**: [Vite](https://vitejs.dev/)
 *   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 *   **State Management**: [Pinia](https://pinia.vuejs.org/)
@@ -70,6 +72,13 @@ docker-compose up -d pocketbase
 | **users** | Auth | `status` (Select: pending, active), `role` (Select: user, admin), `avatar` (File) | Update: Owner or Admin |
 | **prompts** | Base | `title`, `content` (Text), `tags` (JSON), `user` (Rel: users), `parent_id` (Rel: prompts) | Create/View: Active User, Update/Delete: Owner |
 | **likes** | Base | `user` (Rel: users), `prompt` (Rel: prompts) | Create/Delete: Owner |
+
+> 💡 **效能優化提示**：
+> 為了確保「收藏」分頁的載入速度，請務必在 `likes` collection 中為 `user` 欄位建立索引 (Index)。
+> ```sql
+> CREATE INDEX idx_likes_user ON likes (user)
+> ```
+> 使用 Docker 啟動時，系統會自動載入 `pb_migrations` 目錄下的腳本來建立此索引。
 
 ### 3. 啟動前端 (Web)
 ```bash
