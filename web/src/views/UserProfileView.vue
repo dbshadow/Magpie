@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { pb } from '../lib/pocketbase'
 import { useI18n } from 'vue-i18n'
 import { useInfiniteScroll } from '@vueuse/core'
@@ -12,7 +12,6 @@ import CreatePromptModal from '../components/CreatePromptModal.vue'
 import ChangePasswordModal from '../components/ChangePasswordModal.vue'
 
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
 
 // User Data
@@ -32,7 +31,6 @@ const activeTab = ref<'posts' | 'likes'>('posts')
 const { 
   items: posts, 
   loading: postsLoading, 
-  hasMore: postsHasMore, 
   loadNext: loadNextPosts, 
   reset: resetPosts 
 } = useInfiniteScrollFetch({
@@ -46,11 +44,13 @@ const {
     // Update total count
     postsCount.value = result.totalItems
     // Approximate likes received sum from loaded items
+    // TS Fix: Ensure result.items is treated as array
+    const currentItems = result.items || []
     likesReceivedCount.value = posts.value.reduce((sum, p) => sum + (p.likes_count || 0), 0) + 
-                               result.items.reduce((sum, p) => sum + (p.likes_count || 0), 0)
+                               currentItems.reduce((sum, p) => sum + (p.likes_count || 0), 0)
 
     return {
-      items: result.items,
+      items: currentItems,
       totalPages: result.totalPages,
       totalItems: result.totalItems
     }
@@ -62,7 +62,6 @@ const {
 const {
   items: likes,
   loading: likesLoading,
-  hasMore: likesHasMore,
   loadNext: loadNextLikes,
   reset: resetLikes
 } = useInfiniteScrollFetch({
@@ -74,7 +73,7 @@ const {
     })
     
     // Transform likes to prompts
-    const items = result.items
+    const items = (result.items || [])
       .map(item => item.expand?.prompt)
       .filter(p => p)
 
@@ -90,7 +89,8 @@ const {
 // Use a ref for the scroll target (window or specific element)
 // Here we use window, but @vueuse/core works best if we attach to a dummy element at bottom
 // or pass `window` as target. Using a sentinel element is robust.
-const loadMoreSentinel = ref<HTMLElement | null>(null)
+// TS Fix: remove unused loadMoreSentinel
+// const loadMoreSentinel = ref<HTMLElement | null>(null)
 
 useInfiniteScroll(
   // Target: We use window for the scroll container, but checking distance relative to document
@@ -178,12 +178,12 @@ const saveProfile = async () => {
 
 const handleLikeUpdate = (payload: { id: string, likes_count: number, isLiked: boolean }) => {
   const postIndex = posts.value.findIndex(p => p.id === payload.id)
-  if (postIndex !== -1) {
+  if (postIndex !== -1 && posts.value[postIndex]) {
     posts.value[postIndex].likes_count = payload.likes_count
   }
 
   const likeIndex = likes.value.findIndex(p => p.id === payload.id)
-  if (likeIndex !== -1) {
+  if (likeIndex !== -1 && likes.value[likeIndex]) {
     likes.value[likeIndex].likes_count = payload.likes_count
   }
 }

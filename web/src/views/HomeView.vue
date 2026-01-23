@@ -28,7 +28,6 @@ let searchTimeout: ReturnType<typeof setTimeout>
 const { 
   items: prompts, 
   loading, 
-  hasMore, 
   loadNext, 
   reset 
 } = useInfiniteScrollFetch({
