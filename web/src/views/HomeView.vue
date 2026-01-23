@@ -2,6 +2,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { pb } from '../lib/pocketbase'
 import { useI18n } from 'vue-i18n'
+import { useInfiniteScroll } from '@vueuse/core'
+import { useInfiniteScrollFetch } from '../composables/useInfiniteScrollFetch'
 import Header from '../components/Header.vue'
 import PromptCard from '../components/PromptCard.vue'
 import PromptDetailModal from '../components/PromptDetailModal.vue'
@@ -10,8 +12,8 @@ import { useTagStore } from '../stores/tagStore'
 
 const { t } = useI18n()
 const tagStore = useTagStore()
-const prompts = ref<any[]>([])
-const loading = ref(false) // Start false, loadPrompts will set true
+
+// State
 const selectedPrompt = ref<any>(null)
 const isModalOpen = ref(false)
 const isCreateModalOpen = ref(false)
@@ -20,23 +22,17 @@ const remixData = ref<any>(null)
 const selectedTags = ref<Set<string>>(new Set())
 const searchQuery = ref('')
 const sortBy = ref('-updated')
-const page = ref(1)
-const hasMore = ref(true)
 let searchTimeout: ReturnType<typeof setTimeout>
 
-// Backend Filtering Logic
-const loadPrompts = async (reset = false) => {
-  if (reset) {
-    page.value = 1
-    prompts.value = []
-    hasMore.value = true
-  }
-
-  if (!hasMore.value && !reset) return
-  if (loading.value) return
-
-  loading.value = true
-  try {
+// Infinite Scroll Setup
+const { 
+  items: prompts, 
+  loading, 
+  hasMore, 
+  loadNext, 
+  reset 
+} = useInfiniteScrollFetch({
+  fetchFn: async (page, perPage) => {
     const filters = []
     if (selectedTags.value.size > 0) {
       const tagFilters = Array.from(selectedTags.value).map(id => `tags ~ '${id}'`)
@@ -47,41 +43,46 @@ const loadPrompts = async (reset = false) => {
       filters.push(`(title ~ "${query}" || user.username ~ "${query}" || user.email ~ "${query}")`)
     }
 
-    const result = await pb.collection('prompts').getList(page.value, 50, {
+    const result = await pb.collection('prompts').getList(page, perPage, {
       sort: sortBy.value,
       expand: 'user,tags,parent_id.user',
       filter: filters.join(' && ')
     })
 
-    if (reset) {
-      prompts.value = result.items
-    } else {
-      prompts.value = [...prompts.value, ...result.items]
+    return {
+      items: result.items,
+      totalPages: result.totalPages,
+      totalItems: result.totalItems
     }
-    
-    page.value++
-    hasMore.value = result.page < result.totalPages
-  } catch (e) {
-    console.error(e)
-  } finally {
-    loading.value = false
-  }
-}
+  },
+  perPage: 20
+})
+
+// Trigger infinite scroll on window scroll
+// We attach to window but use distance threshold
+useInfiniteScroll(
+  window,
+  () => { loadNext() },
+  { distance: 200 }
+)
 
 // Watchers for filters
 
 watch(selectedTags, () => {
-  loadPrompts(true)
+  reset()
+  loadNext()
 }, { deep: true })
 
 watch(sortBy, () => {
-  loadPrompts(true)
+  reset()
+  loadNext()
 })
 
 watch(searchQuery, () => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    loadPrompts(true)
+    reset()
+    loadNext()
   }, 300)
 })
 
@@ -112,12 +113,13 @@ const handleEdit = (prompt: any) => {
 
 const handleDeleted = () => {
   isModalOpen.value = false
-  loadPrompts(true)
+  reset()
+  loadNext()
 }
 
 const handleOpenParent = async (parentId: string) => {
   isModalOpen.value = false
-  loading.value = true
+  // Ideally show a global loading state or skeletal modal
   try {
     const record = await pb.collection('prompts').getOne(parentId, {
       expand: 'user,tags,parent_id.user'
@@ -127,30 +129,12 @@ const handleOpenParent = async (parentId: string) => {
   } catch (e) {
     console.error('Failed to load parent prompt', e)
     alert('Original prompt not found (might have been deleted).')
-  } finally {
-    loading.value = false
   }
 }
 
-const sentinel = ref<HTMLElement | null>(null)
-
 onMounted(() => {
   tagStore.fetchTags()
-  loadPrompts()
-  
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0]?.isIntersecting && !loading.value && hasMore.value) {
-      loadPrompts()
-    }
-  }, { rootMargin: '200px' })
-  
-  // Use a timeout to ensure DOM is ready or watch sentinel
-  // But onMounted is usually enough. However, if prompts are empty, sentinel might be visible immediately.
-  // which is fine, it will trigger load.
-  if (sentinel.value) observer.observe(sentinel.value)
-  
-  // Make sure to clean up if we were unmounting, but this is a top level view.
-  // Ideally use onUnmounted to disconnect.
+  loadNext() // Initial load
 })
 </script>
 
@@ -241,13 +225,13 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Initial Loading Skeleton -->
+      <div v-if="loading && prompts.length === 0" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         <div v-for="i in 8" :key="i" class="h-80 animate-pulse rounded-3xl bg-gray-200 dark:bg-gray-800"></div>
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="prompts.length === 0" class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-surface py-32 text-center">
+      <div v-else-if="prompts.length === 0 && !loading" class="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-surface py-32 text-center">
         <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-900/50 text-4xl">🕊️</div>
         <h3 class="text-xl font-bold text-main">{{ t('home.noPrompts') }}</h3>
         <p class="mt-2 text-muted">{{ t('home.beTheFirst') }}</p>
@@ -265,11 +249,14 @@ onMounted(() => {
           @click="openPrompt"
         />
       </div>
-      
-      <!-- Sentinel for Infinite Scroll -->
-      <div ref="sentinel" class="h-10 w-full flex justify-center items-center mt-4">
-          <div v-if="loading && prompts.length > 0" class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-primary"></div>
+
+      <!-- Load More Spinner -->
+      <div v-if="loading && prompts.length > 0" class="flex justify-center py-8 w-full">
+           <div class="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-primary"></div>
       </div>
+      
+      <!-- Sentinel for Infinite Scroll Trigger -->
+      <div class="h-4 w-full"></div>
     </main>
 
     <PromptDetailModal 
@@ -288,8 +275,8 @@ onMounted(() => {
       :initial-data="remixData"
       :edit-mode="isEditMode"
       @close="isCreateModalOpen = false"
-      @created="loadPrompts(true)"
-      @updated="loadPrompts(true)"
+      @created="reset(); loadNext()"
+      @updated="reset(); loadNext()"
     />
   </div>
 </template>

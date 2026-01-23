@@ -101,7 +101,15 @@ const handleDelete = async () => {
                 <button @click="emit('open-parent', prompt.expand.parent_id.id)" class="font-bold hover:underline cursor-pointer">
                   {{ prompt.expand.parent_id.title }}
                 </button>
-                by {{ prompt.expand.parent_id.expand?.user?.name || prompt.expand.parent_id.expand?.user?.username || 'Anonymous' }}
+                by 
+                <router-link 
+                  v-if="prompt.expand.parent_id.expand?.user?.id" 
+                  :to="`/user/${prompt.expand.parent_id.expand.user.id}`" 
+                  class="font-bold hover:underline cursor-pointer"
+                >
+                  {{ prompt.expand.parent_id.expand?.user?.name || prompt.expand.parent_id.expand?.user?.username || 'Anonymous' }}
+                </router-link>
+                <span v-else>{{ prompt.expand.parent_id.expand?.user?.name || prompt.expand.parent_id.expand?.user?.username || 'Anonymous' }}</span>
               </span>
            </div>
 

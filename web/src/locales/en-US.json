@@ -7,6 +7,7 @@
     "getStarted": "Get Started",
     "cancel": "Cancel",
     "save": "Save",
+    "saving": "Saving...",
     "delete": "Delete",
     "edit": "Edit",
     "copy": "Copy",
@@ -43,7 +44,24 @@
     "approvalMessage": "Your account has been created successfully! An administrator needs to approve your access before you can start sharing prompts.",
     "email": "Email",
     "password": "Password",
-    "username": "Username"
+    "username": "Username",
+    "passwordsDoNotMatch": "Passwords do not match"
+  },
+  "profile": {
+    "posts": "Posts",
+    "likes": "Likes",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "passwordUpdated": "Password updated successfully!",
+    "postsCount": "Posts",
+    "likesReceived": "Likes Received",
+    "uploadAvatar": "Upload Avatar",
+    "noPosts": "No posts yet.",
+    "noLikes": "No liked prompts yet."
   },
   "prompt": {
     "title": "Title",

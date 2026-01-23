@@ -23,14 +23,12 @@ const router = createRouter({
     {
       path: '/pending',
       name: 'pending',
-      component: () => import('../views/PendingView.vue'),
-      meta: { requiresAuth: true }
+      component: () => import('../views/PendingView.vue')
     },
     {
-      path: '/admin',
-      name: 'admin',
-      component: () => import('../views/AdminView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true }
+      path: '/user/:id',
+      name: 'user-profile',
+      component: () => import('../views/UserProfileView.vue')
     }
   ]
 })

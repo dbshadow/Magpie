@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { pb } from '../lib/pocketbase'
 import { useI18n } from 'vue-i18n'
 
@@ -7,7 +8,8 @@ const props = defineProps<{
   prompt: any
 }>()
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click', 'like-updated'])
+const router = useRouter()
 const { t } = useI18n()
 const isLiked = ref(false)
 const likeCount = ref(0)
@@ -51,8 +53,22 @@ const toggleLike = async (e: Event) => {
       isLiked.value = true
       likeRecordId.value = record.id
     }
+    
+    // Notify parent to update state (fixes sync between tabs)
+    emit('like-updated', {
+      id: props.prompt.id,
+      likes_count: likeCount.value,
+      isLiked: isLiked.value
+    })
   } catch (e) {
     console.error('Failed to update likes:', e)
+  }
+}
+
+const goToProfile = (e: Event) => {
+  e.stopPropagation()
+  if (props.prompt.expand?.user?.id) {
+    router.push(`/user/${props.prompt.expand.user.id}`)
   }
 }
 
@@ -111,7 +127,10 @@ onMounted(() => {
 
       <!-- Footer -->
       <div class="flex items-center justify-between border-t border-gray-50 dark:border-gray-800 pt-3">
-        <div class="flex items-center gap-2">
+        <div 
+          class="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg pr-2 -ml-1 py-1 transition-colors cursor-pointer"
+          @click="goToProfile"
+        >
           <!-- Avatar -->
           <img 
             v-if="prompt.expand?.user?.avatar"

@@ -56,7 +56,10 @@ const toggleLanguage = () => {
           <div class="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
 
           <div class="flex items-center gap-3">
-             <div class="flex items-center gap-3 rounded-full py-1 pr-3 pl-1">
+             <div 
+               @click="router.push(`/user/${user.id}`)"
+               class="flex items-center gap-3 rounded-full py-1 pr-3 pl-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+             >
                 <div class="h-9 w-9 overflow-hidden rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                     <img 
                       v-if="user.avatar"

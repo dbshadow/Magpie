@@ -7,6 +7,7 @@
     "getStarted": "立即開始",
     "cancel": "取消",
     "save": "儲存",
+    "saving": "儲存中...",
     "delete": "刪除",
     "edit": "編輯",
     "copy": "複製",
@@ -43,31 +44,48 @@
     "approvalMessage": "您的帳號已成功建立！管理員審核通過後，您即可開始使用。",
     "email": "電子郵件",
     "password": "密碼",
-    "username": "使用者名稱"
+    "username": "使用者名稱",
+    "passwordsDoNotMatch": "密碼不符"
+  },
+  "profile": {
+    "posts": "發布",
+    "likes": "收藏",
+    "editProfile": "編輯個人資料",
+    "changePassword": "修改密碼",
+    "oldPassword": "舊密碼",
+    "newPassword": "新密碼",
+    "confirmNewPassword": "確認新密碼",
+    "updatePassword": "更新密碼",
+    "passwordUpdated": "密碼更新成功！",
+    "postsCount": "發布數",
+    "likesReceived": "獲讚數",
+    "uploadAvatar": "上傳頭像",
+    "noPosts": "尚未發布任何 Prompt。",
+    "noLikes": "尚未收藏任何 Prompt。"
   },
   "prompt": {
     "title": "標題",
     "description": "描述",
     "content": "Prompt 內容",
     "tags": "標籤",
-    "share": "發布 Prompt",
+    "share": "分享 Prompt",
     "update": "更新 Prompt",
-    "remix": "混搭 (Remix)",
+    "remix": "引用 Prompt",
     "resultPreview": "成果預覽",
     "text": "文字",
     "image": "圖片",
     "uploadFile": "上傳檔案",
     "fillVariables": "填寫變數",
     "rawPrompt": "原始 Prompt",
-    "compiledPrompt": "完整 Prompt",
-    "exampleOutput": "輸出範例",
-    "copySuccess": "Prompt 已複製到剪貼簿！",
-    "deleteConfirm": "您確定要刪除這個 Prompt 嗎？",
+    "compiledPrompt": "預覽結果",
+    "exampleOutput": "成果範例",
+    "copySuccess": "已複製到剪貼簿！",
+    "deleteConfirm": "確定要刪除這個 Prompt 嗎？",
     "placeholders": {
-      "title": "給您的 Prompt 一個吸睛的標題",
-      "desc": "這個 Prompt 該如何使用？",
-      "content": "使用 {'{{'}variable{'}}'} 來設定動態參數",
-      "resultText": "範例輸出文字..."
+      "title": "給這個 Prompt 一個響亮的標題",
+      "desc": "該如何使用這個 Prompt？",
+      "content": "使用 {'{{'}variable{'}}'} 來代表變數",
+      "resultText": "預期產出的文字內容..."
     }
   }
 }
